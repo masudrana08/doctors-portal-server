@@ -47,37 +47,13 @@ client.connect(err => {
   })
 
   app.get('/appoinment',(req,res)=>{
-  //   admin.auth().verifyIdToken(req.headers.authtoken)
-  //   .then(decodedToken=>{
-  //     const {uid, email} = decodedToken
-  //     if(uid==req.headers.uid && email == req.headers.email){
-        
-        
-  //     }
-  //   })
-  //   .catch(error=>{
-  //     console.log(error)
-  //   });
-    const email= req.headers.email
-  usersCollection.find({email:email})
+    appoinmentCollection.find()
         .toArray((error,documents)=>{
-          switch (documents[0].role) {
-            case 'admin':
-              appoinmentCollection.find({})
-              .toArray((error, documents)=>{
-                res.send(documents)
-              })
-            case 'user':
-              appoinmentCollection.find({email:`${email}`})
-              .toArray((error, documents)=>{
-                res.send(documents)
-              })
-
-          }
+          res.send(documents)
         })
-  })
+      })
 
- 
+
 });
 
 
