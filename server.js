@@ -25,7 +25,11 @@ client.connect(err => {
   // perform actions on the collection object
   app.post('/appoinment-booking',(req,res)=>{
     appoinmentCollection.insertOne(req.body)
+    .then(result=>{
+      res.send(result.insertedCount>0)
+    })
   })
+  
   
   app.post('/addUser',(req,res)=>{
     usersCollection.insertOne(req.body)
