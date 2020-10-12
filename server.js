@@ -38,20 +38,21 @@ client.connect(err => {
     })
   })
 
-  app.get('/userRole',(req,res)=>{
-    const email = req.headers.email
-    usersCollection.find({email:email})
-    .toArray((error,documents)=>{
-      res.send(documents[0])
-    })
-  })
+
 
   app.get('/appoinment',(req,res)=>{
     appoinmentCollection.find()
         .toArray((error,documents)=>{
           res.send(documents)
         })
+    })
+
+    app.get('/appoinment-by-date',(req,res)=>{
+      appoinmentCollection.find({date:req.headers.mydate})
+      .toArray((error,documents)=>{
+        res.send(documents)
       })
+    })
 
 
 });
