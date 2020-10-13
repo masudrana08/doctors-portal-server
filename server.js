@@ -3,6 +3,11 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const app = express()
 const admin = require('firebase-admin');
+const fileUpload=require('express-fileupload')
+const fs=require('fs-extra')
+
+app.use(fileUpload())
+app.use(express.static('doctors'))
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -22,6 +27,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
   const appoinmentCollection = client.db(`${process.env.DB_NAME}`).collection("appoinments");
   const usersCollection = client.db(`${process.env.DB_NAME}`).collection("users");
+  const doctorsCollection = client.db(`${process.env.DB_NAME}`).collection("doctors");
   // perform actions on the collection object
   app.post('/appoinment-booking',(req,res)=>{
     appoinmentCollection.insertOne(req.body)
@@ -49,6 +55,33 @@ client.connect(err => {
 
     app.get('/appoinment-by-date',(req,res)=>{
       appoinmentCollection.find({date:req.headers.mydate})
+      .toArray((error,documents)=>{
+        res.send(documents)
+      })
+    })
+
+    app.post('/add-doctor',(req,res)=>{
+      const file=req.files.file
+      const name=req.body.name
+      const email=req.body.email
+      const pathName=`${__dirname}/doctors/${file.name}`
+
+      const newImg=file.data
+      const encImg=newImg.toString('base64')
+      const image={
+        contentType:file.mimetype,
+        size:file.size,
+        img:Buffer(encImg,'base64')
+      }
+      doctorsCollection.insertOne({image})
+      .then(result=>{
+       console.log(result)
+       
+      })
+
+    })
+    app.get('/show-doctors',(req,res)=>{
+      doctorsCollection.find({})
       .toArray((error,documents)=>{
         res.send(documents)
       })
